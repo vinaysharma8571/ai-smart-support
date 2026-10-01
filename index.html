@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Support - AI Customer Ticket Support</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+
+            <div class="logo">
+                <h1>Smart Support </h1>
+                <p>AI - Powered Customer Support System</p>
+            </div>
+
+            <nav>
+                <a href="#">Dashboard</a>
+                <a href="#">Tickets</a>
+                <a href="#">AI Assistant</a>
+            </nav>
+
+        </div>
+    </header>
+    <main>
+
+        <div class="dashboard-heading">
+            <h2>Dashboard</h2>
+            <p>Welcome back! Here's what's happening with your support system.</p>
+        </div>
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <h3>Total Tickets</h3>
+                <p>243</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Open Tickets</h3>
+                <p>67</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>In Progress</h3>
+                <p>35</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Resolved</h3>
+                <p>128</p>
+            </div>
+
+        </div>
+
+        <section>
+            <h2>Create a Support Ticket</h2>
+            <p>Tell us about your problem and our support team will help you </p>
+
+            <form>
+                <div>
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name " required>
+
+                </div>
+
+                <div>
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div>
+                    <label for="title">Issue Title</label>
+                    <input type="text" id="title" name="title" placeholder="Breifly describe your issue here " required>
+
+                </div>
+
+                <div>
+                    <label for="category">category</label>
+
+                    <select name="category" id="category" required>
+                        <option value="">Select a category</option>
+                        <option value="techincal">Technical </option>
+                        <option value="billing">Billing </option>
+                        <option value="account">Account</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="other">Other</option>
+
+                    </select>
+                </div>
+
+                <div>
+                    <label for="priority"> Priority </label>
+
+                    <select name="priority" id="priority" required>
+                        <option value="">Select Priority</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+
+                </div>
+
+                <div>
+                    <label for="description">Describe your Issue</label>
+                    <textarea name="description" id="description" rows="6"
+                        placeholder="Explain your problem in details.." required>
+
+                </textarea>
+                </div>
+
+                <button type="submit">Create Ticket</button>
+            </form>
+        </section>
+
+        <section class="recent-tickets">
+
+            <h2>Recent Tickets</h2>
+
+            <div class="ticket-list">
+
+                <div class="ticket">
+
+                    <div>
+                        <h3>Payment failed</h3>
+                        <p>#1024 · Billing</p>
+                    </div>
+
+                    <span class="status open">Open</span>
+
+                </div>
+
+
+                <div class="ticket">
+
+                    <div>
+                        <h3>Can't reset password</h3>
+                        <p>#1023 · Account</p>
+                    </div>
+
+                    <span class="status progress">In Progress</span>
+
+                </div>
+
+
+                <div class="ticket">
+
+                    <div>
+                        <h3>Feature request</h3>
+                        <p>#1022 · Feature</p>
+                    </div>
+
+                    <span class="status resolved">Resolved</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="ai-assistant">
+
+            <div class="ai-header">
+                <div>
+                    <h2>AI Support Assistant</h2>
+                    <p>Get Instant answers to your support questions</p>
+                </div>
+
+                <span class="ai-badge">Beta</span>
+            </div>
+
+            <div class="ai-message">
+                <p>Hi! 👋 How can I help you today? </p>
+            </div>
+
+            <div class="ai-input">
+                <input type="text" placeholder="Ask your question...">
+                <button>Ask Ai</button>
+            </div>
+            
+        </section>
+
+
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Smart Support . All rights reserved.</p>
+    </footer>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
