@@ -1,33 +1,67 @@
 // ========================================
-// 1. CREATE TICKET STORAGE
+// 1. DATA (the "source of truth")
 // ========================================
 
-// Create an empty array to store all tickets
-const tickets = [];
+// Every ticket lives in this array. The screen is always drawn FROM this array.
+// Sample tickets so you can test without typing. To start empty, change to: const tickets = [];
+const tickets = [
+    {
+        id: 1024,
+        name: "Rahul Sharma",
+        email: "rahul@gmail.com",
+        title: "Payment failed",
+        category: "billing",
+        priority: "high",
+        description: "5000 rupees was deducted from my account but my order was not created.",
+        status: "open"
+    },
+    {
+        id: 1025,
+        name: "Priya Patel",
+        email: "priya@gmail.com",
+        title: "Can't reset password",
+        category: "account",
+        priority: "medium",
+        description: "The reset link in the email says it has expired.",
+        status: "in-progress"
+    },
+    {
+        id: 1026,
+        name: "Amit Kumar",
+        email: "amit@gmail.com",
+        title: "Add dark mode",
+        category: "feature",
+        priority: "low",
+        description: "It would be great to have a dark theme for night use.",
+        status: "resolved"
+    },
+    {
+        id: 1027,
+        name: "Sneha Gupta",
+        email: "sneha@gmail.com",
+        title: "App crashes on checkout",
+        category: "technical",
+        priority: "critical",
+        description: "The app shows an error and closes when I press Pay.",
+        status: "open"
+    }
+];
 
-// Give the unique ticket id to every ticket
-let ticketId = 1024;
+// The id the NEXT new ticket will get
+let ticketId = 1028;
 
-// Store the ticket currently being edited
+// The ticket currently being edited (null means we are creating a new one)
 let editingTicket = null;
 
-// Store the DOM element of the ticket currently being edited
-let editingTicketElement = null;
-
 
 // ========================================
-// AVAILABLE TICKET STATUSES
+// 2. LOOKUP TABLES
 // ========================================
 
-// Available ticket statuses
+// All available statuses (used to build the dropdown)
 const statuses = ["open", "in-progress", "resolved", "closed"];
 
-
-// ========================================
-// STATUS CLASS MAP
-// ========================================
-
-// Convert internal status values to CSS classes
+// Status value -> CSS class
 const statusClassMap = {
     open: "open",
     "in-progress": "progress",
@@ -35,12 +69,7 @@ const statusClassMap = {
     closed: "closed"
 };
 
-
-// ========================================
-// STATUS TEXT MAP
-// ========================================
-
-// Convert internal status values to display text
+// Status value -> text shown on screen
 const statusTextMap = {
     open: "Open",
     "in-progress": "In Progress",
@@ -48,231 +77,168 @@ const statusTextMap = {
     closed: "Closed"
 };
 
+// Category value -> text shown on screen
+const categoryTextMap = {
+    technical: "Technical",
+    billing: "Billing",
+    account: "Account",
+    feature: "Feature Request",
+    other: "Other"
+};
+
+// Priority value -> text shown on screen
+const priorityTextMap = {
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    critical: "Critical"
+};
+
 
 // ========================================
-// 2. GET HTML ELEMENTS
+// 3. GET HTML ELEMENTS
 // ========================================
 
-// Get the form from the HTML
 const form = document.querySelector("form");
 
-// Get the Recent Tickets section from the HTML
-const recentTickets = document.querySelector(".recent-tickets");
+// The empty <div class="ticket-list"> where tickets get drawn
+const ticketList = document.querySelector(".ticket-list");
 
-// Get the search input from the HTML
+// Not used yet. We connect it to search tomorrow.
 const searchInput = document.querySelector("#searchInput");
 
 
 // ========================================
-// 3. RENDER ONE TICKET
+// 4. HELPER: CREATE AN ELEMENT WITH TEXT
 // ========================================
 
-// This function creates one complete ticket card
-function renderTicket(ticket) {
+// Makes one element, gives it a CSS class, and sets its text.
+// textContent is used (not innerHTML) so user input can never inject HTML.
+function createTextElement(tag, className, text) {
 
-    // ========================================
-    // CREATE MAIN TICKET ELEMENT
-    // ========================================
+    const element = document.createElement(tag);
 
+    element.classList.add(className);
+
+    element.textContent = text;
+
+    return element;
+
+}
+
+
+// ========================================
+// 5. BUILD ONE TICKET CARD
+// ========================================
+
+// Takes one ticket object and RETURNS a finished card.
+// It does not put the card on the page. renderTickets() does that.
+function createTicketElement(ticket) {
+
+    // Main card
     const ticketElement = document.createElement("div");
 
     ticketElement.classList.add("ticket");
 
 
-    // ========================================
-    // CREATE TICKET INFO CONTAINER
-    // ========================================
-
+    // Left side: ticket details
     const ticketInfo = document.createElement("div");
 
     ticketInfo.classList.add("ticket-info");
 
+    ticketInfo.appendChild(
+        createTextElement("h3", "ticket-title", ticket.title)
+    );
+
+    ticketInfo.appendChild(
+        createTextElement("p", "ticket-category", categoryTextMap[ticket.category])
+    );
+
+    ticketInfo.appendChild(
+        createTextElement("p", "ticket-priority", priorityTextMap[ticket.priority])
+    );
+
+    ticketInfo.appendChild(
+        createTextElement("p", "ticket-name", ticket.name)
+    );
+
+    ticketInfo.appendChild(
+        createTextElement("p", "ticket-email", ticket.email)
+    );
+
+    ticketInfo.appendChild(
+        createTextElement("p", "ticket-description", ticket.description)
+    );
+
     ticketElement.appendChild(ticketInfo);
 
 
-    // ========================================
-    // CREATE TICKET META CONTAINER
-    // ========================================
-
+    // Right side: id, buttons, status
     const ticketMeta = document.createElement("div");
 
     ticketMeta.classList.add("ticket-meta");
 
-    ticketElement.appendChild(ticketMeta);
+    ticketMeta.appendChild(
+        createTextElement("p", "ticket-id", `#${ticket.id}`)
+    );
 
 
-    // ========================================
-    // TITLE
-    // ========================================
+    // ---------- EDIT BUTTON ----------
+    const editButton = createTextElement("button", "edit-button", "Edit");
 
-    const ticketTitle = document.createElement("h3");
+    editButton.addEventListener("click", function () {
 
-    ticketTitle.classList.add("ticket-title");
+        // Remember which ticket we are editing
+        editingTicket = ticket;
 
-    ticketTitle.textContent = ticket.title;
+        // Fill the form with this ticket's data
+        document.querySelector("#name").value = ticket.name;
+        document.querySelector("#email").value = ticket.email;
+        document.querySelector("#title").value = ticket.title;
+        document.querySelector("#category").value = ticket.category;
+        document.querySelector("#priority").value = ticket.priority;
+        document.querySelector("#description").value = ticket.description;
 
-    ticketInfo.appendChild(ticketTitle);
+        // Scroll up so the form is visible
+        form.scrollIntoView({ behavior: "smooth" });
 
-
-    // ========================================
-    // CATEGORY
-    // ========================================
-
-    const ticketCategory = document.createElement("p");
-
-    ticketCategory.classList.add("ticket-category");
-
-    ticketCategory.textContent = ticket.category;
-
-    ticketInfo.appendChild(ticketCategory);
-
-
-    // ========================================
-    // PRIORITY
-    // ========================================
-
-    const ticketPriority = document.createElement("p");
-
-    ticketPriority.classList.add("ticket-priority");
-
-    ticketPriority.textContent = ticket.priority;
-
-    ticketInfo.appendChild(ticketPriority);
-
-
-    // ========================================
-    // NAME
-    // ========================================
-
-    const ticketName = document.createElement("p");
-
-    ticketName.classList.add("ticket-name");
-
-    ticketName.textContent = ticket.name;
-
-    ticketInfo.appendChild(ticketName);
-
-
-    // ========================================
-    // EMAIL
-    // ========================================
-
-    const ticketEmail = document.createElement("p");
-
-    ticketEmail.classList.add("ticket-email");
-
-    ticketEmail.textContent = ticket.email;
-
-    ticketInfo.appendChild(ticketEmail);
-
-
-    // ========================================
-    // DESCRIPTION
-    // ========================================
-
-    const ticketDescription = document.createElement("p");
-
-    ticketDescription.classList.add("ticket-description");
-
-    ticketDescription.textContent = ticket.description;
-
-    ticketInfo.appendChild(ticketDescription);
-
-
-    // ========================================
-    // TICKET ID
-    // ========================================
-
-    const ticketIdElement = document.createElement("p");
-
-    ticketIdElement.classList.add("ticket-id");
-
-    ticketIdElement.textContent = `#${ticket.id}`;
-
-    ticketMeta.appendChild(ticketIdElement);
-
-
-    // ========================================
-    // EDIT BUTTON
-    // ========================================
-
-    const editButton = document.createElement("button");
-
-    editButton.textContent = "Edit";
-
-    editButton.classList.add("edit-button");
+    });
 
     ticketMeta.appendChild(editButton);
 
 
-    // Edit button functionality
-    editButton.addEventListener("click", function () {
+    // ---------- DELETE BUTTON ----------
+    const deleteButton = createTextElement("button", "delete-button", "Delete");
 
-        editingTicket = ticket;
-
-        editingTicketElement = ticketElement;
-
-
-        document.querySelector("#name").value = ticket.name;
-
-        document.querySelector("#email").value = ticket.email;
-
-        document.querySelector("#title").value = ticket.title;
-
-        document.querySelector("#category").value = ticket.category;
-
-        document.querySelector("#priority").value = ticket.priority;
-
-        document.querySelector("#description").value = ticket.description;
-
-    });
-
-
-    // ========================================
-    // DELETE BUTTON
-    // ========================================
-
-    const deleteButton = document.createElement("button");
-
-    deleteButton.textContent = "Delete";
-
-    deleteButton.classList.add("delete-button");
-
-    ticketMeta.appendChild(deleteButton);
-
-
-    // Delete button functionality
     deleteButton.addEventListener("click", function () {
 
+        // 1. Change the DATA
         const ticketIndex = tickets.indexOf(ticket);
 
         tickets.splice(ticketIndex, 1);
 
-        ticketElement.remove();
-
-
-        // Clear editing mode if this ticket
-        // was currently being edited
+        // If we were editing this ticket, leave edit mode
         if (editingTicket === ticket) {
 
             editingTicket = null;
 
-            editingTicketElement = null;
+            form.reset();
 
         }
 
+        // 2. Redraw the SCREEN from the data
+        renderTickets(tickets);
+
     });
 
+    ticketMeta.appendChild(deleteButton);
 
-    // ========================================
-    // STATUS BADGE
-    // ========================================
 
+    // ---------- STATUS BADGE ----------
     const statusElement = document.createElement("span");
 
-    statusElement.classList.add("ticket-status");
-
     statusElement.classList.add(
+        "ticket-status",
         "status",
         statusClassMap[ticket.status]
     );
@@ -282,274 +248,182 @@ function renderTicket(ticket) {
     ticketMeta.appendChild(statusElement);
 
 
-    // ========================================
-    // STATUS SELECT
-    // ========================================
-
+    // ---------- STATUS DROPDOWN ----------
     const statusSelect = document.createElement("select");
 
     statusSelect.classList.add("status-select");
 
+    // Build one <option> for each status using a loop
+    statuses.forEach(function (status) {
 
-    // Open option
-    const openOption = document.createElement("option");
+        const option = document.createElement("option");
 
-    openOption.value = "open";
+        option.value = status;
 
-    openOption.textContent = "Open";
+        option.textContent = statusTextMap[status];
 
-    statusSelect.appendChild(openOption);
+        statusSelect.appendChild(option);
 
+    });
 
-    // In Progress option
-    const progressOption = document.createElement("option");
-
-    progressOption.value = "in-progress";
-
-    progressOption.textContent = "In Progress";
-
-    statusSelect.appendChild(progressOption);
-
-
-    // Resolved option
-    const resolvedOption = document.createElement("option");
-
-    resolvedOption.value = "resolved";
-
-    resolvedOption.textContent = "Resolved";
-
-    statusSelect.appendChild(resolvedOption);
-
-
-    // Closed option
-    const closedOption = document.createElement("option");
-
-    closedOption.value = "closed";
-
-    closedOption.textContent = "Closed";
-
-    statusSelect.appendChild(closedOption);
-
-
-    // Set dropdown to current ticket status
+    // Show the ticket's current status
     statusSelect.value = ticket.status;
+
+    statusSelect.addEventListener("change", function () {
+
+        // 1. Change the DATA
+        ticket.status = statusSelect.value;
+
+        // 2. Redraw the SCREEN from the data
+        renderTickets(tickets);
+
+    });
 
     ticketMeta.appendChild(statusSelect);
 
 
-    // ========================================
-    // STATUS CHANGE
-    // ========================================
+    ticketElement.appendChild(ticketMeta);
 
-    statusSelect.addEventListener("change", function () {
-
-        // Get the newly selected status
-        const newStatus = statusSelect.value;
-
-
-        // Update the ticket object
-        ticket.status = newStatus;
-
-
-        // Update the visible status text
-        statusElement.textContent = statusTextMap[newStatus];
-
-
-        // Remove old status CSS classes
-        statusElement.classList.remove(
-            "open",
-            "progress",
-            "resolved",
-            "closed"
-        );
-
-
-        // Add the correct CSS class
-        statusElement.classList.add(
-            statusClassMap[newStatus]
-        );
-
-    });
-
-
-    // ========================================
-    // ADD TICKET TO WEBPAGE
-    // ========================================
-
-    recentTickets.appendChild(ticketElement);
+    return ticketElement;
 
 }
 
 
 // ========================================
-// 4. LISTEN FOR FORM SUBMISSION
+// 6. RENDER A LIST OF TICKETS
 // ========================================
 
-// Run this function when the form is submitted
+// THE KEY FUNCTION.
+// Give it ANY list of tickets. It clears the screen and draws exactly that list.
+// Today we always pass the full tickets array.
+// Tomorrow we will pass a searched/filtered list instead.
+function renderTickets(list) {
+
+    // Clear everything currently shown
+    ticketList.innerHTML = "";
+
+    // Nothing to show
+    if (list.length === 0) {
+
+        ticketList.appendChild(
+            createTextElement(
+                "p",
+                "empty-message",
+                "No tickets yet. Create your first ticket above."
+            )
+        );
+
+        return;
+
+    }
+
+    // Draw one card per ticket
+    list.forEach(function (ticket) {
+
+        ticketList.appendChild(createTicketElement(ticket));
+
+    });
+
+}
+
+
+// ========================================
+// 7. FORM SUBMISSION
+// ========================================
+
 form.addEventListener("submit", function (event) {
 
-    // Prevent the browser from refreshing the page
+    // Stop the page from refreshing
     event.preventDefault();
 
-
-    // ========================================
-    // 5. GET DATA FROM THE FORM
-    // ========================================
-
-    // Get the name entered by the user
-    const name = document.querySelector("#name").value;
-
-    console.log(name);
-
-
-    // Get the email entered by the user
-    const email = document.querySelector("#email").value;
-
-    console.log(email);
-
-
-    // Get the issue title entered by the user
-    const title = document.querySelector("#title").value;
-
-    console.log(title);
-
-
-    // Get the selected category
+    // Read the form values
+    const name = document.querySelector("#name").value.trim();
+    const email = document.querySelector("#email").value.trim();
+    const title = document.querySelector("#title").value.trim();
     const category = document.querySelector("#category").value;
-
-    console.log(category);
-
-
-    // Get the selected priority
     const priority = document.querySelector("#priority").value;
-
-    console.log(priority);
-
-
-    // Get the issue description
-    const description = document.querySelector("#description").value;
-
-    console.log(description);
+    const description = document.querySelector("#description").value.trim();
 
 
-    // ========================================
-    // 6. EDIT EXISTING TICKET
-    // ========================================
-
-    console.log("EDITING TICKET:", editingTicket);
-
+    // ---------- EDIT AN EXISTING TICKET ----------
     if (editingTicket) {
 
+        // Change the DATA
         editingTicket.name = name;
-
         editingTicket.email = email;
-
         editingTicket.title = title;
-
         editingTicket.category = category;
-
         editingTicket.priority = priority;
-
         editingTicket.description = description;
 
-
-        // Update visible ticket information
-        editingTicketElement.querySelector(
-            ".ticket-title"
-        ).textContent = title;
-
-        editingTicketElement.querySelector(
-            ".ticket-category"
-        ).textContent = category;
-
-        editingTicketElement.querySelector(
-            ".ticket-priority"
-        ).textContent = priority;
-
-        editingTicketElement.querySelector(
-            ".ticket-name"
-        ).textContent = name;
-
-        editingTicketElement.querySelector(
-            ".ticket-email"
-        ).textContent = email;
-
-        editingTicketElement.querySelector(
-            ".ticket-description"
-        ).textContent = description;
-
-
-        // Exit edit mode
+        // Leave edit mode
         editingTicket = null;
 
-        editingTicketElement = null;
-
-
-        // Clear form
         form.reset();
+
+        // Redraw the SCREEN
+        renderTickets(tickets);
 
         return;
 
     }
 
 
-    // ========================================
-    // 7. CREATE THE TICKET OBJECT
-    // ========================================
-
-    // Store all the form data inside one ticket object
+    // ---------- CREATE A NEW TICKET ----------
     const ticket = {
-
         id: ticketId,
-
         name: name,
-
         email: email,
-
         title: title,
-
         category: category,
-
         priority: priority,
-
         description: description,
-
         status: "open"
-
     };
 
-
-    // Increase the ticket ID for the next ticket
     ticketId++;
 
-
-    // Display the ticket object in the console
-    console.log(ticket);
-
-
-    // ========================================
-    // 8. STORE THE TICKET
-    // ========================================
-
-    // Add the ticket object to the tickets array
+    // Change the DATA
     tickets.push(ticket);
 
-
-    // ========================================
-    // 9. DISPLAY THE TICKET
-    // ========================================
-
-    renderTicket(ticket);
-
-
-    // Display all stored tickets in the console
-    console.log(tickets);
-
-
-    // ========================================
-    // 10. CLEAR THE FORM
-    // ========================================
+    // Redraw the SCREEN
+    renderTickets(tickets);
 
     form.reset();
+
+});
+
+
+// ========================================
+// 8. FIRST DRAW WHEN THE PAGE LOADS
+// ========================================
+
+renderTickets(tickets);
+
+// ========================================
+// 9. LIVE SEARCH
+// ========================================
+
+searchInput.addEventListener("input", function () {
+
+    // What the user typed, in lowercase
+    const searchText = searchInput.value.toLowerCase();
+
+    // Keep only the tickets that contain that text
+    const matchingTickets = tickets.filter(function (ticket) {
+
+        return (
+            ticket.title.toLowerCase().includes(searchText) ||
+            ticket.name.toLowerCase().includes(searchText) ||
+            ticket.email.toLowerCase().includes(searchText) ||
+            ticket.description.toLowerCase().includes(searchText)
+        );
+
+    });
+
+    // Draw only those tickets
+    renderTickets(matchingTickets);
+
+    
 
 });
