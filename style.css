@@ -1,3 +1,7 @@
+/* ========================================
+   RESET AND BASE
+   ======================================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -10,24 +14,110 @@ body {
     font-family: Arial, sans-serif;
 }
 
+
+/* ========================================
+   HEADER
+   ======================================== */
+
 header {
     background-color: #0f172a;
     color: white;
     padding: 20px 40px;
 }
 
-header h1 {
-    font-size: 36px;
-    margin-bottom: 8px;
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+.logo h1 {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.logo p {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+nav a:hover {
+    color: #a5b4fc;
 }
 
 
-header p {
-    font-size: 16px;
-    opacity: 0.8;
+/* ========================================
+   DASHBOARD HEADING AND STATS
+   ======================================== */
 
+.dashboard-heading {
+    max-width: 1200px;
+    margin: 40px auto 20px;
+    padding: 0 20px;
 }
+
+.dashboard-heading h2 {
+    font-size: 32px;
+    margin-bottom: 6px;
+}
+
+.dashboard-heading p {
+    color: #64748b;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.stat-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+}
+
+.stat-card h3 {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+
+/* ========================================
+   SECTIONS (shared card style)
+   Used by: create ticket form, recent tickets, AI assistant
+   ======================================== */
 
 section {
     background-color: #ffffff;
@@ -36,32 +126,37 @@ section {
     max-width: 800px;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-
 }
 
 section h2 {
     font-size: 28px;
     margin-bottom: 10px;
-
 }
 
 section p {
     color: #64748b;
     margin-bottom: 25px;
-
 }
+
+
+/* ========================================
+   FORM
+   ======================================== */
 
 form {
     display: flex;
     flex-direction: column;
     gap: 18px;
+}
 
+form div {
+    display: flex;
+    flex-direction: column;
 }
 
 label {
     font-weight: 600;
     margin-bottom: 6px;
-
 }
 
 form input,
@@ -74,12 +169,6 @@ form textarea {
     font-size: 15px;
     font-family: inherit;
     background-color: #ffffff;
-    ;
-}
-
-form div {
-    display: flex;
-    flex-direction: column;
 }
 
 form input:focus,
@@ -87,13 +176,12 @@ form select:focus,
 form textarea:focus {
     outline: none;
     border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70., 229, 0, 1);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 form textarea {
     min-height: 140px;
     resize: vertical;
-
 }
 
 form button {
@@ -111,161 +199,92 @@ form button:hover {
     background-color: #4338ca;
 }
 
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
 
+/* ========================================
+   TICKET LIST
+   ======================================== */
+
+.ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ticket {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-
-
-}
-
-.logo h1 {
-    font-size: 24px;
-    margin-bottom: 4px;
-
-}
-
-.logo p {
-    font-size: 13px;
-    opacity: 0.7;
-}
-
-nav {
-    display: flex;
-    gap: 25px;
-
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-
-}
-
-nav a:hover {
-    color: #a5b4fc;
-}
-
-
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 0 20px;
-
-}
-
-.stat-card {
-    background-color: #ffffff;
-    padding: 20px;
+    align-items: flex-start;
+    padding: 16px;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.stat-card :hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
-
+.ticket:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
 }
 
-.stat-card h3 {
-    color: #64748b;
-    font-size: 14px;
-    margin-bottom: 10px;
-
+.ticket-info {
+    flex: 1;
 }
 
-.stat-card p {
-    color: #0f172a;
-    font-size: 30px;
-    font-weight: 700;
-
-}
-
-.dashboard-heading {
-    max-width: 1200px;
-    margin: 40px auto 20px;
-    padding: 0 20px;
-}
-
-.dashboard-heading h2 {
-    font-size: 32px;
+.ticket-title {
+    font-size: 16px;
     margin-bottom: 6px;
 }
 
-.dashboard-heading p {
+.ticket-category {
     color: #64748b;
-}
-
-.ticket-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.ticket {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-}
-
-.ticket h3 {
-    font-size: 15px;
+    font-size: 13px;
     margin-bottom: 4px;
 }
 
-.ticket p {
+.ticket-priority {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.ticket-name {
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.ticket-email {
     color: #64748b;
     font-size: 13px;
+    margin-bottom: 8px;
 }
 
-.recent-tickets {
-    background-color: #ffffff;
-    padding: 30px;
-    margin: 30px auto;
-    max-width: 800px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+.ticket-description {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-.ticket-list {
+.ticket-id {
+    color: #64748b;
+    font-size: 13px;
+    white-space: nowrap;
+    margin-top: 10px;
+}
+
+.ticket-status {
+    white-space: nowrap;
+}
+
+.ticket-meta {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.ticket {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    gap: 12px;
+    margin-left: 20px;
 }
 
-.ticket h3 {
-    font-size: 15px;
-    margin-bottom: 4px;
-}
 
-.ticket p {
-    color: #64748b;
-    font-size: 13px;
-}
+/* ========================================
+   STATUS BADGES
+   ======================================== */
 
 .status {
     padding: 6px 10px;
@@ -289,23 +308,15 @@ nav a:hover {
     color: #15803d;
 }
 
-.ticket {
-    transition: background-color 0.2s ease, transform 0.2s ease;
+.status.closed {
+    background-color: #f1f5f9;
+    color: #475569;
 }
 
-.ticket:hover {
-    background-color: #f8fafc;
-    transform: translateY(-1px);
-}
 
-.ai-assistant {
-    background-color: #ffffff;
-    padding: 30px;
-    margin: 30px auto;
-    max-width: 800px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-}
+/* ========================================
+   AI ASSISTANT
+   ======================================== */
 
 .ai-header {
     display: flex;
@@ -365,75 +376,10 @@ nav a:hover {
     background-color: #4338ca;
 }
 
-.ticket {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
 
-.ticket-info {
-    flex: 1;
-}
-
-.ticket-title {
-    font-size: 16px;
-    margin-bottom: 6px;
-}
-
-.ticket-category {
-    color: #64748b;
-    font-size: 13px;
-    margin-bottom: 4px;
-}
-
-.ticket-priority {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-.ticket-name {
-    font-size: 13px;
-    margin-bottom: 3px;
-}
-
-.ticket-email {
-    color: #64748b;
-    font-size: 13px;
-    margin-bottom: 8px;
-}
-
-.ticket-description {
-    color: #475569;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.ticket-id {
-    color: #64748b;
-    font-size: 13px;
-    white-space: nowrap;
-    margin-top: 10px;
-
-}
-
-.ticket-status {
-    white-space: nowrap;
-}
-
-.ticket-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: 20px;
-}
-
-
-
+/* ========================================
+   MOBILE (600px and below)
+   ======================================== */
 
 @media (max-width: 600px) {
 
@@ -472,10 +418,7 @@ nav a:hover {
     }
 
     .ticket {
-        flex-direction: row;
-        align-items: flex-start;
         gap: 15px;
     }
-
 
 }
