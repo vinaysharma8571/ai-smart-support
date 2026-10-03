@@ -229,8 +229,8 @@ function createTicketElement(ticket) {
 
         }
 
-        // 2. Redraw the SCREEN from the data
-        renderTickets(tickets);
+        // 2. Redraw the SCREEN (keeping the current search and filters)
+        applyFilters();
 
     });
 
@@ -277,8 +277,8 @@ function createTicketElement(ticket) {
         // 1. Change the DATA
         ticket.status = statusSelect.value;
 
-        // 2. Redraw the SCREEN from the data
-        renderTickets(tickets);
+        // 2. Redraw the SCREEN (keeping the current search and filters)
+        applyFilters();
 
     });
 
@@ -296,9 +296,7 @@ function createTicketElement(ticket) {
 // 6. RENDER A LIST OF TICKETS
 // ========================================
 
-// THE KEY FUNCTION.
 // Give it ANY list of tickets. It clears the screen and draws exactly that list.
-// Search and filters pass it a smaller list.
 function renderTickets(list) {
 
     // Clear everything currently shown
@@ -307,12 +305,13 @@ function renderTickets(list) {
     // Nothing to show
     if (list.length === 0) {
 
+        // Two different reasons for an empty list
+        const message = tickets.length === 0
+            ? "No tickets yet. Create your first ticket above."
+            : "No tickets found. Try changing your search or filters.";
+
         ticketList.appendChild(
-            createTextElement(
-                "p",
-                "empty-message",
-                "No tickets yet. Create your first ticket above."
-            )
+            createTextElement("p", "empty-message", message)
         );
 
         return;
@@ -330,7 +329,51 @@ function renderTickets(list) {
 
 
 // ========================================
-// 7. FORM SUBMISSION
+// 7. SEARCH + FILTERS TOGETHER
+// ========================================
+
+// It reads the search box and all three dropdowns, keeps only the tickets
+// that match ALL of them, and draws the result.
+// Every change (typing, picking a dropdown, creating, deleting) calls this.
+function applyFilters() {
+
+    // What the user typed / picked right now
+    const searchText = searchInput.value.toLowerCase().trim();
+    const selectedStatus = statusFilter.value;
+    const selectedPriority = priorityFilter.value;
+    const selectedCategory = categoryFilter.value;
+
+    const matchingTickets = tickets.filter(function (ticket) {
+
+        // Does the search text appear in any of these fields?
+        const matchesSearch =
+            ticket.title.toLowerCase().includes(searchText) ||
+            ticket.name.toLowerCase().includes(searchText) ||
+            ticket.email.toLowerCase().includes(searchText) ||
+            ticket.description.toLowerCase().includes(searchText);
+
+        // "all" means this dropdown does not filter anything
+        const matchesStatus =
+            selectedStatus === "all" || ticket.status === selectedStatus;
+
+        const matchesPriority =
+            selectedPriority === "all" || ticket.priority === selectedPriority;
+
+        const matchesCategory =
+            selectedCategory === "all" || ticket.category === selectedCategory;
+
+        // The ticket stays only if ALL four checks pass
+        return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
+
+    });
+
+    renderTickets(matchingTickets);
+
+}
+
+
+// ========================================
+// 8. FORM SUBMISSION
 // ========================================
 
 form.addEventListener("submit", function (event) {
@@ -364,7 +407,7 @@ form.addEventListener("submit", function (event) {
         form.reset();
 
         // Redraw the SCREEN
-        renderTickets(tickets);
+        applyFilters();
 
         return;
 
@@ -389,7 +432,7 @@ form.addEventListener("submit", function (event) {
     tickets.push(ticket);
 
     // Redraw the SCREEN
-    renderTickets(tickets);
+    applyFilters();
 
     form.reset();
 
@@ -397,111 +440,20 @@ form.addEventListener("submit", function (event) {
 
 
 // ========================================
-// 8. FIRST DRAW WHEN THE PAGE LOADS
+// 9. LISTEN FOR SEARCH AND FILTER CHANGES
 // ========================================
 
-renderTickets(tickets);
+// Typing in the search box
+searchInput.addEventListener("input", applyFilters);
 
-
-// ========================================
-// 9. LIVE SEARCH
-// ========================================
-
-searchInput.addEventListener("input", function () {
-
-    // What the user typed, in lowercase
-    const searchText = searchInput.value.toLowerCase();
-
-    // Keep only the tickets that contain that text
-    const matchingTickets = tickets.filter(function (ticket) {
-
-        return (
-            ticket.title.toLowerCase().includes(searchText) ||
-            ticket.name.toLowerCase().includes(searchText) ||
-            ticket.email.toLowerCase().includes(searchText) ||
-            ticket.description.toLowerCase().includes(searchText)
-        );
-
-    });
-
-    // Draw only those tickets
-    renderTickets(matchingTickets);
-
-});
+// Picking something in any dropdown
+statusFilter.addEventListener("change", applyFilters);
+priorityFilter.addEventListener("change", applyFilters);
+categoryFilter.addEventListener("change", applyFilters);
 
 
 // ========================================
-// 10. DROPDOWN FILTERS (each works alone for now)
+// 10. FIRST DRAW WHEN THE PAGE LOADS
 // ========================================
 
-// ---------- STATUS FILTER ----------
-statusFilter.addEventListener("change", function () {
-
-    const selected = statusFilter.value;
-
-    // "all" means show everything
-    if (selected === "all") {
-
-        renderTickets(tickets);
-
-        return;
-
-    }
-
-    const matchingTickets = tickets.filter(function (ticket) {
-
-        return ticket.status === selected;
-
-    });
-
-    renderTickets(matchingTickets);
-
-});
-
-
-// ---------- PRIORITY FILTER ----------
-priorityFilter.addEventListener("change", function () {
-
-    const selected = priorityFilter.value;
-
-    if (selected === "all") {
-
-        renderTickets(tickets);
-
-        return;
-
-    }
-
-    const matchingTickets = tickets.filter(function (ticket) {
-
-        return ticket.priority === selected;
-
-    });
-
-    renderTickets(matchingTickets);
-
-});
-
-
-// ---------- CATEGORY FILTER ----------
-categoryFilter.addEventListener("change", function () {
-
-    const selected = categoryFilter.value;
-
-    if (selected === "all") {
-
-        renderTickets(tickets);
-
-        return;
-
-    }
-
-    const matchingTickets = tickets.filter(function (ticket) {
-
-        return ticket.category === selected;
-
-    });
-
-    renderTickets(matchingTickets);
-
-});
+applyFilters();

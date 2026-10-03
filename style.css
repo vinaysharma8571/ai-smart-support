@@ -281,6 +281,28 @@ form button:hover {
     margin-left: 20px;
 }
 
+.ticket-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.ticket-controls input,
+.ticket-controls select {
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #ffffff;
+}
+
+.ticket-controls input {
+    flex: 1;
+    min-width: 200px;
+}
+
 
 /* ========================================
    STATUS BADGES
