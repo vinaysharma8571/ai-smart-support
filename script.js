@@ -110,6 +110,12 @@ const statusFilter = document.querySelector("#statusFilter");
 const priorityFilter = document.querySelector("#priorityFilter");
 const categoryFilter = document.querySelector("#categoryFilter");
 
+// The four numbers in the stat cards
+const totalCount = document.querySelector("#totalCount");
+const openCount = document.querySelector("#openCount");
+const progressCount = document.querySelector("#progressCount");
+const resolvedCount = document.querySelector("#resolvedCount");
+
 
 // ========================================
 // 4. HELPER: CREATE AN ELEMENT WITH TEXT
@@ -368,9 +374,32 @@ function applyFilters() {
     });
 
     renderTickets(matchingTickets);
+    updateStats();
 
 }
 
+// ========================================
+// 7B. DASHBOARD STATS
+// ========================================
+
+// Counts ALL tickets (not just the filtered ones) and updates the four cards.
+function updateStats() {
+
+    totalCount.textContent = tickets.length;
+
+    openCount.textContent = tickets.filter(function (ticket) {
+        return ticket.status === "open";
+    }).length;
+
+    progressCount.textContent = tickets.filter(function (ticket) {
+        return ticket.status === "in-progress";
+    }).length;
+
+    resolvedCount.textContent = tickets.filter(function (ticket) {
+        return ticket.status === "resolved";
+    }).length;
+
+}
 
 // ========================================
 // 8. FORM SUBMISSION

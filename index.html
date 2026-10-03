@@ -38,22 +38,22 @@
 
             <div class="stat-card">
                 <h3>Total Tickets</h3>
-                <p>243</p>
+                <p id="totalCount">0</p>
             </div>
 
             <div class="stat-card">
                 <h3>Open Tickets</h3>
-                <p>67</p>
+                <p id="openCount">0</p>
             </div>
 
             <div class="stat-card">
                 <h3>In Progress</h3>
-                <p>35</p>
+                <p id="progressCount">0</p>
             </div>
 
             <div class="stat-card">
                 <h3>Resolved</h3>
-                <p>128</p>
+                <p id="resolvedCount">0</p>
             </div>
 
         </div>
@@ -75,11 +75,11 @@
 
                 <div>
                     <label for="title">Issue Title</label>
-                    <input type="text" id="title" name="title" placeholder="Breifly describe your issue here " required>
+                    <input type="text" id="title" name="title" placeholder="Briefly describe your issue here " required>
                 </div>
 
                 <div>
-                    <label for="category">category</label>
+                    <label for="category">Category</label>
 
                     <select name="category" id="category" required>
                         <option value="">Select a category</option>
@@ -117,7 +117,7 @@
 
             <h2>Recent Tickets</h2>
 
-            <!-- Search tickets -->
+            <!-- Search and filters -->
             <div class="ticket-controls">
 
                 <input type="text" id="searchInput" placeholder="Search tickets...">
@@ -150,8 +150,6 @@
             </div>
 
             <div class="ticket-list">
-            </div>
-
             </div>
 
         </section>
