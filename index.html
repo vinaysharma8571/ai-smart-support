@@ -122,6 +122,31 @@
 
                 <input type="text" id="searchInput" placeholder="Search tickets...">
 
+                <select id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                </select>
+
+                <select id="priorityFilter">
+                    <option value="all">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="technical">Technical</option>
+                    <option value="billing">Billing</option>
+                    <option value="account">Account</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="other">Other</option>
+                </select>
+
             </div>
 
             <div class="ticket-list">

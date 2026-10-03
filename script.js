@@ -104,8 +104,11 @@ const form = document.querySelector("form");
 // The empty <div class="ticket-list"> where tickets get drawn
 const ticketList = document.querySelector(".ticket-list");
 
-// Not used yet. We connect it to search tomorrow.
+// Search box and the three filter dropdowns
 const searchInput = document.querySelector("#searchInput");
+const statusFilter = document.querySelector("#statusFilter");
+const priorityFilter = document.querySelector("#priorityFilter");
+const categoryFilter = document.querySelector("#categoryFilter");
 
 
 // ========================================
@@ -295,8 +298,7 @@ function createTicketElement(ticket) {
 
 // THE KEY FUNCTION.
 // Give it ANY list of tickets. It clears the screen and draws exactly that list.
-// Today we always pass the full tickets array.
-// Tomorrow we will pass a searched/filtered list instead.
+// Search and filters pass it a smaller list.
 function renderTickets(list) {
 
     // Clear everything currently shown
@@ -400,6 +402,7 @@ form.addEventListener("submit", function (event) {
 
 renderTickets(tickets);
 
+
 // ========================================
 // 9. LIVE SEARCH
 // ========================================
@@ -424,6 +427,81 @@ searchInput.addEventListener("input", function () {
     // Draw only those tickets
     renderTickets(matchingTickets);
 
-    
+});
+
+
+// ========================================
+// 10. DROPDOWN FILTERS (each works alone for now)
+// ========================================
+
+// ---------- STATUS FILTER ----------
+statusFilter.addEventListener("change", function () {
+
+    const selected = statusFilter.value;
+
+    // "all" means show everything
+    if (selected === "all") {
+
+        renderTickets(tickets);
+
+        return;
+
+    }
+
+    const matchingTickets = tickets.filter(function (ticket) {
+
+        return ticket.status === selected;
+
+    });
+
+    renderTickets(matchingTickets);
+
+});
+
+
+// ---------- PRIORITY FILTER ----------
+priorityFilter.addEventListener("change", function () {
+
+    const selected = priorityFilter.value;
+
+    if (selected === "all") {
+
+        renderTickets(tickets);
+
+        return;
+
+    }
+
+    const matchingTickets = tickets.filter(function (ticket) {
+
+        return ticket.priority === selected;
+
+    });
+
+    renderTickets(matchingTickets);
+
+});
+
+
+// ---------- CATEGORY FILTER ----------
+categoryFilter.addEventListener("change", function () {
+
+    const selected = categoryFilter.value;
+
+    if (selected === "all") {
+
+        renderTickets(tickets);
+
+        return;
+
+    }
+
+    const matchingTickets = tickets.filter(function (ticket) {
+
+        return ticket.category === selected;
+
+    });
+
+    renderTickets(matchingTickets);
 
 });
